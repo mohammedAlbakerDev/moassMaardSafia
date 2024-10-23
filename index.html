@@ -1,0 +1,189 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Manager</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            width: 150px;
+            text-align: center;
+        }
+
+        button {
+            margin: 5px;
+        }
+
+        #export-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="product-container"></div>
+    <button id="export-btn">Export to Excel</button>
+
+    <script type="module">
+        import { products } from './products.js';
+
+        const productContainer = document.getElementById('product-container');
+        const exportBtn = document.getElementById('export-btn');
+
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" style="width: 100%;">
+                <h4>${product.name}</h4>
+                <button class="minus" data-id="${product.id}">-</button>
+                <span class="count" data-id="${product.id}">0</span>
+                <button class="plus" data-id="${product.id}">+</button>
+            `;
+            
+            productContainer.appendChild(card);
+        });
+
+        productContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('plus')) {
+                const id = e.target.getAttribute('data-id');
+                const countElem = document.querySelector(`.count[data-id="${id}"]`);
+                countElem.textContent = parseInt(countElem.textContent) + 1;
+            }
+            
+            if (e.target.classList.contains('minus')) {
+                const id = e.target.getAttribute('data-id');
+                const countElem = document.querySelector(`.count[data-id="${id}"]`);
+                if (parseInt(countElem.textContent) > 0) {
+                    countElem.textContent = parseInt(countElem.textContent) - 1;
+                }
+            }
+        });
+
+        exportBtn.addEventListener('click', () => {
+            const data = products.map(product => {
+                const countElem = document.querySelector(`.count[data-id="${product.id}"]`);
+                return { id: product.id, count: countElem.textContent };
+            }).filter(product => product.count > 0);
+
+            const csvContent = 'data:text/csv;charset=utf-8,' + 
+                data.map(e => e.id + ',' + e.count).join('\n');
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'product_counts.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Manager</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css"> <!-- Link to your external CSS -->
+    <style>
+        /* Inline styles are fine, but consider moving to style.css */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Styles omitted for brevity */
+    </style>
+</head>
+<body>
+    <div id="product-container"></div>
+    <button id="export-btn">Export to Excel</button>
+
+    <script type="module">
+        import { products } from './products.js';
+
+        const productContainer = document.getElementById('product-container');
+        const exportBtn = document.getElementById('export-btn');
+
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" style="width: 100%;">
+                <h4>${product.name}</h4>
+                <button class="minus" data-id="${product.id}">-</button>
+                <span class="count" data-id="${product.id}">0</span>
+                <button class="plus" data-id="${product.id}">+</button>
+            `;
+            productContainer.appendChild(card);
+        });
+
+        productContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('plus')) {
+                const id = e.target.getAttribute('data-id');
+                const countElem = document.querySelector(`.count[data-id="${id}"]`);
+                countElem.textContent = parseInt(countElem.textContent) + 1;
+            }
+
+            if (e.target.classList.contains('minus')) {
+                const id = e.target.getAttribute('data-id');
+                const countElem = document.querySelector(`.count[data-id="${id}"]`);
+                if (parseInt(countElem.textContent) > 0) {
+                    countElem.textContent = parseInt(countElem.textContent) - 1;
+                }
+            }
+        });
+
+        exportBtn.addEventListener('click', () => {
+            const data = products.map(product => {
+                const countElem = document.querySelector(`.count[data-id="${product.id}"]`);
+                return { id: product.id, count: countElem.textContent };
+            }).filter(product => product.count > 0);
+
+            const csvContent = 'data:text/csv;charset=utf-8,' + 
+                data.map(e => e.id + ',' + e.count).join('\n');
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'product_counts.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
